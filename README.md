@@ -16,7 +16,7 @@ https://chocolatey.org/install
 ### Python
 https://www.python.org/
 
-If you don't have it already install Python 3 (at least 3.7). Run in powershell in admin rights:
+If you don't have it already install Python 3 (at least 3.8). Run in powershell in admin rights:
 ```Powershell
 choco install python
 ```
@@ -48,3 +48,13 @@ pip install -r requirements.txt
 It should be the same as for windows but with your regular package manager.
 
 Be careful to use python 3. You may need to change some commands to fit Linux command line.
+
+# Run
+Before your first run you should apply the migrations (and after every time the database change).
+```
+python manage.py migrate
+```
+You can run the development server with:
+```
+python manage.py runserver
+```
