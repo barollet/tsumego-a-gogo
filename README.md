@@ -28,10 +28,18 @@ choco install postgresql
 ```
 
 ### Python dependencies
-It is recommended to use a virtualenv but you can skip this step
+It is recommended to use a virtualenv but you can skip this step.
+Install it if you don't have already:
 ```
 pip install --user virtualenv
+```
+Then init a virtualenv in the project directory and activate it:
+```
 python -m venv env
+.\env\Scripts\activate
+```
+Anyway you will need to install the Python dependencies:
+```
 pip install -r requirements.txt
 ```
 
