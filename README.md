@@ -24,7 +24,22 @@ choco install python
 ### Postgresql
 https://www.postgresql.org/
 ```Powershell
-choco install postgresql
+choco install postgresql --params '/Password:type_your_password
+```
+Then you can create a database and a tsumegogogo user dev user.
+This is only for development purpose.
+First connect to a psql shell in a non admin powershell.
+```
+psql -U postgres
+```
+Once in the psql shell create the database and add the dev user.
+Then connect to the new database and give rights to tsumegogogo.
+```
+CREATE DATABASE "tsumegogogo-db";
+CREATE USER tsumegogogo WITH CREATEDB;
+ALTER USER tsumegogogo WITH PASSWORD 'tsumegogogo';
+\c tsumegogogo-db
+GRANT ALL ON SCHEMA public TO tsumegogogo;
 ```
 
 ### Python dependencies
