@@ -1,5 +1,7 @@
 # tsumego-a-gogo
 
+TODO remove migrations from gitignore when development ends
+
 # Installation
 
 ## Windows
@@ -69,7 +71,15 @@ Before your first run you should apply the migrations (and after every time the 
 ```
 python manage.py migrate
 ```
+You also need to create your local superadmin (use the username and password you want).
+```
+python manage.py createsuperuser
+```
 You can run the development server with:
 ```
 python manage.py runserver
 ```
+
+# Folder hierarchy
+- `frontend` see in the frontend directory specific folders.
+- `tsumego_core` backend django app to store tsumegos in the database. SGF facilities are also found here.
