@@ -82,4 +82,5 @@ python manage.py runserver
 
 # Folder hierarchy
 - `frontend` see in the frontend directory specific folders.
+- `backend` Django app to aggregate all the other backend apps into a single API.
 - `tsumego_core` backend django app to store tsumegos in the database. SGF facilities are also found here.
