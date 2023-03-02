@@ -1,6 +1,12 @@
 # tsumego-a-gogo
 
+Development TODO
+TODO upload several tsumegos in a zip file
+
+Before launching TODO
 TODO remove migrations from gitignore when development ends
+TODO change secret to real secret
+TODO production checklist in general
 
 # Installation
 

@@ -9,9 +9,15 @@ class Collection(models.Model):
     # enabled sets if the collection is publicly visible
     enabled = models.BooleanField(default=False)
 
-class Tags(models.Model):
+    def __str__(self):
+        return str(self.name)
+
+class Tag(models.Model):
     """Tags for tsumegos to sort them by theme instead of collection"""
-    name = models.CharField(20)
+    name = models.CharField(max_length=20)
+
+    def __str__(self):
+        return str(self.name)
 
 class Tsumego(models.Model):
     """Tsumego model class.
@@ -19,7 +25,7 @@ class Tsumego(models.Model):
     problem_sgf = models.CharField(max_length=400)
     solutions_sgf = models.TextField()
     collection = models.ForeignKey(Collection, on_delete=models.CASCADE)
-    tags = models.ManyToManyField(Tags)
+    tags = models.ManyToManyField(Tag)
 
     # statistics for the problem
     # maybe better statistics later
