@@ -1,12 +1,12 @@
 # tsumego-a-gogo
 
 Development TODO
-TODO upload several tsumegos in a zip file
+- TODO upload several tsumegos in a zip file
 
 Before launching TODO
-TODO remove migrations from gitignore when development ends
-TODO change secret to real secret
-TODO production checklist in general
+- TODO remove migrations from gitignore when development ends
+- TODO change secret to real secret
+- TODO production checklist in general
 
 # Installation
 
@@ -66,6 +66,19 @@ Anyway you will need to install the Python dependencies:
 pip install -r requirements.txt
 ```
 
+### Install the frontend (not needed yet)
+
+Install Node version manager for windows https://github.com/coreybutler/nvm-windows. Then update nodejs.
+
+```
+nvm install latest
+nvm use 19.7.0
+```
+19.7.0 may change depending on the installed version.
+
+
+
+Install React 
 
 ## Linux
 It should be the same as for windows but with your regular package manager.
