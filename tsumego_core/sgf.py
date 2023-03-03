@@ -19,6 +19,11 @@ TOP_RIGHT = (1, 1)
 BOTTOM_LEFT = (-1, -1)
 BOTTOM_RIGHT = (1, -1)
 
+def clean_sgf_string(sgf_string: str):
+    """Applies the clean_sgf function directly to the sgf string."""
+    game_tree = sgf.Sgf_game.from_string(sgf_string)
+    return clean_sgf(game_tree).serialise()
+
 def clean_sgf(game_tree: sgf.Sgf_game):
     """Removes unecessary nodes so internal SGF to tsumegogogo have the same format"""
     root = game_tree.get_root()

@@ -1,4 +1,5 @@
 """Collection and tsumego core models for the whole application"""
+#!pylint: disable=missing-class-docstring, too-few-public-methods
 from django.db import models
 
 # Create your models here.
@@ -25,6 +26,7 @@ class Tsumego(models.Model):
     problem_sgf = models.CharField(max_length=400)
     solutions_sgf = models.TextField()
     collection = models.ForeignKey(Collection, on_delete=models.CASCADE)
+    number = models.IntegerField() # tsumegos in a collection are sorted by number
     tags = models.ManyToManyField(Tag)
 
     # statistics for the problem
@@ -32,3 +34,6 @@ class Tsumego(models.Model):
     num_seen = models.IntegerField(default=0)
     num_success = models.IntegerField(default=0)
     num_failure = models.IntegerField(default=0)
+
+    class Meta:
+        ordering = ['collection', 'number']

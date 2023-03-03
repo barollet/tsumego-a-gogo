@@ -40,6 +40,7 @@ INSTALLED_APPS = [
     'corsheaders',
     'rest_framework',
 
+    'user_core',
     'tsumego_core',
 ]
 
