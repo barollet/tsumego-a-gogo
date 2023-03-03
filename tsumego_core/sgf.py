@@ -22,7 +22,7 @@ BOTTOM_RIGHT = (1, -1)
 def clean_sgf_string(sgf_string: str):
     """Applies the clean_sgf function directly to the sgf string."""
     game_tree = sgf.Sgf_game.from_string(sgf_string)
-    return clean_sgf(game_tree).serialise()
+    return clean_sgf(game_tree).serialise().decode("utf-8")
 
 def clean_sgf(game_tree: sgf.Sgf_game):
     """Removes unecessary nodes so internal SGF to tsumegogogo have the same format"""
@@ -35,6 +35,8 @@ def clean_sgf(game_tree: sgf.Sgf_game):
     for prop in root.properties():
         if prop not in VALID_SGF_PROP:
             root.unset(prop)
+
+    return game_tree
 
 def compute_quadrant(game_tree: sgf.Sgf_game) -> bool:
     """ Computes the tsumego orientation.

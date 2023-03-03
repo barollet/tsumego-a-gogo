@@ -2,6 +2,7 @@
 
 Development TODO
 - TODO upload several tsumegos in a zip file
+- TODO correctly set up the API permissions
 
 Before launching TODO
 - TODO remove migrations from gitignore when development ends

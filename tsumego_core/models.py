@@ -27,7 +27,7 @@ class Tsumego(models.Model):
     solutions_sgf = models.TextField()
     collection = models.ForeignKey(Collection, on_delete=models.CASCADE)
     number = models.IntegerField() # tsumegos in a collection are sorted by number
-    tags = models.ManyToManyField(Tag)
+    tags = models.ManyToManyField(Tag, blank=True)
 
     # statistics for the problem
     # maybe better statistics later
@@ -36,4 +36,6 @@ class Tsumego(models.Model):
     num_failure = models.IntegerField(default=0)
 
     class Meta:
+        # no two same tsumegos can have the same number in the same collection
+        unique_together = ('collection', 'number',)
         ordering = ['collection', 'number']

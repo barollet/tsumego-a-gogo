@@ -23,8 +23,8 @@ class TsumegoSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Tsumego
-        fields = ['id', 'name', 'enabled']
-        depth = 1 # unwide collection and tag values
+        fields = '__all__'
+        #depth = 1 # unwide collection and tag values
 
     def validate_problem_sgf(self, value):
         """ Check that the blog post is about Django."""
@@ -37,4 +37,8 @@ class TsumegoSerializer(serializers.ModelSerializer):
     def validate_solutions_sgf(self, value):
         """ Same as previous function.
         # TODO do specific validation """
-        self.validate_problem_sgf(value)
+        try:
+            value = clean_sgf_string(value)
+        except Exception as exp:
+            raise serializers.ValidationError(f"Error while parsing SGF file: {str(exp)}")
+        return value

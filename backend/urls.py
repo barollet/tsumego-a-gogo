@@ -15,18 +15,16 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import include, path
+from django.shortcuts import redirect
 
-from rest_framework import routers
-
-from user_core import views
-
-
-router = routers.DefaultRouter()
-router.register(r'users', views.UserViewSet)
-router.register(r'groups', views.GroupViewSet)
 
 urlpatterns = [
-    path('', include(router.urls)),
-    path('admin/', admin.site.urls),
-    path('api-auth/', include('rest_framework.urls'))
+    # TODO set API landing page with version for example
+    path('', lambda request: redirect('core/', permanent=False)),
+
+    path('admin/', admin.site.urls), # TODO better admin interface
+    path('api-auth/', include('rest_framework.urls')),
+
+    path('core/', include('tsumego_core.urls')),
+    path('user/', include('user_core.urls')),
 ]
