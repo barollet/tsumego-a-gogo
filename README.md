@@ -81,6 +81,11 @@ nvm use 19.7.0
 
 Install React 
 
+Command to run JSX watcher:
+```
+npx babel --watch src --out-dir . --presets react-app/prod
+```
+
 ## Linux
 It should be the same as for windows but with your regular package manager.
 

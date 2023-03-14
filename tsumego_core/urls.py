@@ -5,9 +5,9 @@ from rest_framework.routers import DefaultRouter
 from tsumego_core import views
 
 router = DefaultRouter()
-router.register(r'collections', views.CollectionViewSet,basename="collection")
-router.register(r'tags', views.TagViewSet,basename="tag")
-router.register(r'tsumegos', views.TsumegoViewSet,basename="tsumego")
+router.register(r'collection', views.CollectionViewSet,basename="collection")
+router.register(r'tag', views.TagViewSet,basename="tag")
+router.register(r'tsumego', views.TsumegoViewSet,basename="tsumego")
 
 
 urlpatterns = [
