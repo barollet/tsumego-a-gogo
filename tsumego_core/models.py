@@ -35,6 +35,10 @@ class Tsumego(models.Model):
     num_success = models.IntegerField(default=0)
     num_failure = models.IntegerField(default=0)
 
+    # viewport is hardcoded
+    view_x = models.PositiveSmallIntegerField()
+    view_y = models.PositiveSmallIntegerField()
+
     class Meta:
         # no two same tsumegos can have the same number in the same collection
         unique_together = ('collection', 'number',)

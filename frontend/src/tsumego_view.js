@@ -2,12 +2,18 @@ import {React} from './config.js';
 import {JGO} from './config.js';
 import {axios_client} from './config.js';
 
-
-function board_from_sgf(sgf) {
+/* Define board manipulation functions */
+function board_from_sgf(sgf, viewport = [19, 19]) {
     const jrecord = JGO.sgf.load(sgf, true);
 
     const jboard = jrecord.jboard;
-    return new JGO.Setup(jboard, JGO.BOARD.largeWalnut);
+
+
+    var jsetup = new JGO.Setup(jboard, JGO.BOARD.largeWalnut);
+
+    jsetup.view(0, 0, viewport[0], viewport[1]);
+
+    return jsetup;
 }
 
 function set_display_coords(jsetup, value) {
@@ -15,15 +21,14 @@ function set_display_coords(jsetup, value) {
 
 }
 
-function RawTsumego({sgf, display_coords=true}) {
+// A raw tsumego visualization with basic customization
+function RawTsumego({sgf, viewport, display_coords=true}) {
     const boardRef = React.useRef(null);
 
     React.useEffect(() => {
-        const jsetup = board_from_sgf(sgf);
+        const jsetup = board_from_sgf(sgf, viewport);
 
         set_display_coords(jsetup, display_coords);
-
-        jsetup.view(0, 0, 5, 5);
 
         jsetup.create(boardRef.current);
       }, []);
@@ -35,18 +40,20 @@ function RawTsumego({sgf, display_coords=true}) {
 
 export function SimpleTsumego({id, display_coords=false}) {
     const [sgf, setSGF] = React.useState("");
+    const [viewport, setViewport] = React.useState(null);
 
     React.useEffect(() => {
     axios_client.get(`tsumego/${id}`).then((response) => {
+        setViewport([response.data.view_x, response.data.view_y]);
         setSGF(response.data.problem_sgf);
     });
     }, [id]);
 
-    if (sgf == "") {
+    if (sgf == "" || viewport == null) {
         return (null);
     } else {
         return (
-            <RawTsumego sgf={sgf} display_coords={display_coords} />
+            <RawTsumego sgf={sgf} viewport={viewport} display_coords={display_coords} />
         );
     }
 
