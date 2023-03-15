@@ -1,8 +1,12 @@
+import {React} from './config.js';
+
 import CollectionView from './collection_view.js';
 
 export default function App() {
     return (
-      <CollectionView />
+      <React.StrictMode>
+        <CollectionView />
+      </React.StrictMode>
     );
   }
 

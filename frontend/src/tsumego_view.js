@@ -23,18 +23,24 @@ function set_display_coords(jsetup, value) {
 
 // A raw tsumego visualization with basic customization
 function RawTsumego({sgf, viewport, display_coords=true}) {
-    const boardRef = React.useRef(null);
+    const containerRef = React.useRef(null);
+    const init = React.useRef(false);
 
     React.useEffect(() => {
-        const jsetup = board_from_sgf(sgf, viewport);
+        if (init.current === false) {
+            const jsetup = board_from_sgf(sgf, viewport);
 
-        set_display_coords(jsetup, display_coords);
+            set_display_coords(jsetup, display_coords);
+    
+            jsetup.create(containerRef.current);
 
-        jsetup.create(boardRef.current);
+            init.current = true;
+        }
+        
       }, []);
 
     return (
-        <div ref={boardRef}></div>
+        <div ref={containerRef}></div>
     );
 }
 
