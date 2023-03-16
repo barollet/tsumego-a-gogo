@@ -4,6 +4,7 @@ import {SimpleTsumego} from './tsumego_view.js';
 
 
 export default function Gallery() {
+
 return (
     <section>
     <h1>Amazing scientists</h1>

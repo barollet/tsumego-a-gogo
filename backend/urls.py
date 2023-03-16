@@ -23,7 +23,7 @@ urlpatterns = [
     path('', lambda request: redirect('core/', permanent=False)),
 
     path('admin/', admin.site.urls), # TODO better admin interface
-    path('api-auth/', include('rest_framework.urls')),
+    path('rest-api-auth/', include('rest_framework.urls')),
 
     path('core/', include('tsumego_core.urls')),
     path('user/', include('user_core.urls')),

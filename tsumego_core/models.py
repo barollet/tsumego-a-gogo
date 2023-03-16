@@ -6,7 +6,7 @@ from django.db import models
 class Collection(models.Model):
     """Collection model class.
     This is just a list there is no link to tsumegos inside it"""
-    name = models.CharField(max_length=50)
+    name = models.CharField(max_length=50, unique=True)
     # enabled sets if the collection is publicly visible
     enabled = models.BooleanField(default=False)
 

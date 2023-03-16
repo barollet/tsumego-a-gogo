@@ -5,4 +5,5 @@ export const axios_client = axios.create({
 });
 
 export const React = window.React;
+export const ReactRouter = window.ReactRouterDOM;
 export const JGO = window.JGO;
