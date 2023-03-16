@@ -26,7 +26,7 @@ const router = createBrowserRouter([
     element: <Login />,
 },
   {
-    path: "collection/:collectionId/edit",
+    path: "collection/edit/:collectionId",
     element: <CollectionEdit />,
   },
   {

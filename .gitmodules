@@ -1,3 +1,3 @@
-[submodule "frontend/jgoboard"]
-	path = frontend/jgoboard
+[submodule "frontend2/jgoboard"]
+	path = frontend2/jgoboard
 	url = https://github.com/jokkebk/jgoboard.git

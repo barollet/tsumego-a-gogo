@@ -10,6 +10,8 @@ A default header is set and unset to put the token in headers
 
 import axios_client from '../axios';
 
+import NavBar from '../components/nav_bar';
+
 // Remove the token from local state, axios headers and session storage
 function removeToken(setToken) {
     window.sessionStorage.removeItem("token");
@@ -82,6 +84,7 @@ export default function Login() {
         )
     } else {
         return (<>
+        <NavBar />
         <h1>Logged in</h1>
         <button type="button" onClick={handleLogout}>Logout</button>
         </>)
