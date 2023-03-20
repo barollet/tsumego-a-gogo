@@ -1,0 +1,9 @@
+{
+  "name": "my-library",
+  "version": "1.0.0",
+  "source": "main.js",
+  "main": "dist/jgoboard_min.js",
+  "devDependencies": {
+    "parcel": "latest"
+  }
+}
