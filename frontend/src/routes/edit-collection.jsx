@@ -3,6 +3,8 @@ import { useParams } from "react-router-dom";
 
 import NavBar from "../components/nav_bar";
 
+import { SimpleTsumego } from "../components/static_tsumego_view";
+
 export default function CollectionEdit() {
     const { collectionId } = useParams();
 return (
@@ -12,14 +14,8 @@ return (
 
     <p>collection {collectionId}</p>
 
+    <SimpleTsumego id={3} display_coords={true}/>
 
     </section>
 );
 }
-
-/*
-
-    <SimpleTsumego id={3} />
-    <SimpleTsumego id={3} display_coords={true}/>
-    <SimpleTsumego id={3} />
-    */
