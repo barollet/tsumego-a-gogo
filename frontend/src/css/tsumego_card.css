@@ -1,0 +1,8 @@
+.tsumego_hover:hover {
+    opacity: 0.6;
+}
+
+.card_bot_elem {
+    display: inline-block;
+    margin: 5px;
+}

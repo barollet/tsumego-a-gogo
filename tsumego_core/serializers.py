@@ -8,6 +8,8 @@ from tsumego_core.sgf import clean_sgf_headers
 
 # Simple Collection and Tag serializers
 class CollectionSerializer(serializers.ModelSerializer):
+    number = serializers.IntegerField(required=False)
+
     class Meta:
         model = Collection
         fields = '__all__'

@@ -2,11 +2,13 @@ import Form from 'react-bootstrap/Form';
 import Button from 'react-bootstrap/Button';
 
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 
 import axios_client from "../axios";
 
 export default function TsumegoUpload({collectionId}) {
     const [file, setFile] = useState(null);
+    const navigate = useNavigate();
 
     function handleUpload() {
         if (file === null) {
@@ -28,7 +30,10 @@ export default function TsumegoUpload({collectionId}) {
             headers: {
               'Content-Type': 'multipart/form-data'
             }
-        }).then(response => console.log(response.data)).catch(error => console.log(error.response));
+        }).then(response => {
+            console.log(response.data);
+            navigate(0);
+        }).catch(error => console.log(error.response));
     }
 
     return (

@@ -12,7 +12,10 @@ import axios_client from "../axios";
 
 function ShowId({init, show}) {
     if (show) {
-        return <Col xs="auto"><p>Id: {init.id}</p></Col>
+        return <>
+        <Col xs="auto"><p>Id: {init.id}</p></Col>
+        <Col xs="auto"><p>Number of problems: {init.number}</p></Col>
+        </>
     }
 }
 
@@ -25,7 +28,6 @@ function EditCollectionName({setter, init}) {
         </Col>
         <Col>
             <Form.Control
-                className="me-auto"
                 defaultValue={init.name}
                 onChange={(e) => {
                     setter("name", e.target.value);

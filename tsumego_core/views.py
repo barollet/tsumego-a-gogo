@@ -15,6 +15,8 @@ from dynamic_rest.viewsets import DynamicModelViewSet
 from rest_framework.decorators import action
 from rest_framework.response import Response
 
+from django.db.models import Count
+
 from tsumego_core.models import Collection, Tag, Tsumego
 from tsumego_core.serializers import CollectionSerializer, TagSerializer, TsumegoSerializer
 
@@ -66,7 +68,8 @@ def create_tsumegos_from_archive(archive_file, collection_id: int, taken_numbers
 
 
 class CollectionViewSet(viewsets.ModelViewSet):
-    queryset = Collection.objects.all()
+    # we add the number of tsumego in each collection
+    queryset = Collection.objects.all().annotate(number=Count('tsumego')).order_by('id')
     serializer_class = CollectionSerializer
 
     @action(detail=True, methods=['post'])

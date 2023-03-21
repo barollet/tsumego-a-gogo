@@ -8,8 +8,8 @@ import NavBar from "../components/nav_bar";
 
 import axios_client from "../axios";
 
-import { RawTsumego } from "../components/static_tsumego_view";
 import TsumegoUpload from "../components/upload_file";
+import TsumegoEditCard from "../components/tsumego_edit_card";
 
 const divStyle = {
     display: "flex",
@@ -22,7 +22,9 @@ export default function CollectionEdit() {
 
     React.useEffect(() => {
         axios_client.get(`core/tsumego/?filter{collection}=${collectionId}`).then((response) => {
-            setTsumegos(response.data.tsumegos);
+            // TODO put back in normal order and not last inserted ?
+            // Do button to toggle this
+            setTsumegos(response.data.tsumegos.reverse());
         });
     }, []);
 
@@ -37,7 +39,7 @@ export default function CollectionEdit() {
         <p>Collection {collectionId}</p>
 
         <div style={divStyle}>
-            {tsumegos.map((tsumego) => <RawTsumego key={tsumego.id} tsumego={tsumego} display_coords={false}/>)}
+            {tsumegos.map((tsumego) => <TsumegoEditCard key={tsumego.id} tsumego={tsumego} display_coords={false}/>)}
         </div>
 
         </Container>

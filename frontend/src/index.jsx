@@ -12,6 +12,7 @@ import Root from "./routes/root";
 import Login from './routes/login';
 import CollectionEdit from './routes/edit-collection';
 import CollectionsEdit from './routes/edit-collections';
+import TsumegoEdit from './routes/tsumego-edit';
 
 import ErrorPage from "./routes/error-page";
 
@@ -32,6 +33,10 @@ const router = createBrowserRouter([
   {
     path: "collection/edit",
     element: <CollectionsEdit />,
+  },
+  {
+    path: "tsumego/edit/:tsumegoId",
+    element: <TsumegoEdit />,
   },
 ]);
 
