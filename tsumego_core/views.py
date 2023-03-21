@@ -20,6 +20,10 @@ from tsumego_core.serializers import CollectionSerializer, TagSerializer, Tsumeg
 
 def next_available_number_update(taken_numbers):
     """gets the next available number from the given list sets it as taken"""
+    if not taken_numbers:
+        taken_numbers.add(1)
+        return 1
+
     available_holes = set(range(1, max(taken_numbers))) - taken_numbers
     # if some numbers are not taken in-between
     if available_holes:
