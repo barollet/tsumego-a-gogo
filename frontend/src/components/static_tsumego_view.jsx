@@ -8,8 +8,6 @@ function board_from_sgf(sgf, viewport = [19, 19]) {
     const jrecord = JGO.sgf.load(sgf, true);
 
     const jboard = jrecord.jboard;
-
-
     var jsetup = new JGO.Setup(jboard, JGO.BOARD.largeWalnut);
 
     jsetup.view(0, 0, viewport[0], viewport[1]);
@@ -18,21 +16,18 @@ function board_from_sgf(sgf, viewport = [19, 19]) {
 
 function set_display_coords(jsetup, value) {
     jsetup.setOptions({coordinates: {top:value, bottom:value, left:value, right:value}});
-
 }
 
 // A raw tsumego visualization with basic customization
-function RawTsumego({sgf, viewport, display_coords=true}) {
+export function RawTsumego({tsumego, display_coords=true}) {
     const containerRef = React.useRef(null);
     const init = React.useRef(false);
 
     React.useEffect(() => {
         if (init.current === false) {
-            console.log(containerRef.current);
-            const jsetup = board_from_sgf(sgf, viewport);
+            const jsetup = board_from_sgf(tsumego.problem_sgf, [tsumego.view_x, tsumego.view_y]);
 
             set_display_coords(jsetup, display_coords);
-            console.log(jsetup);
             jsetup.create(containerRef.current);
             init.current = true;
         }
@@ -44,21 +39,19 @@ function RawTsumego({sgf, viewport, display_coords=true}) {
 }
 
 export function SimpleTsumego({id, display_coords=false}) {
-    const [sgf, setSGF] = React.useState("");
-    const [viewport, setViewport] = React.useState(null);
+    const [tsumego, setTsumego] = React.useState(null);
 
     React.useEffect(() => {
     axios_client.get(`core/tsumego/${id}`).then((response) => {
-        setViewport([response.data.view_x, response.data.view_y]);
-        setSGF(response.data.problem_sgf);
+        setTsumego(response.data.tsumego);
     });
     }, [id]);
 
-    if (sgf == "" || viewport == null) {
+    if (tsumego === null) {
         return (null);
     } else {
         return (
-            <RawTsumego sgf={sgf} viewport={viewport} display_coords={display_coords} />
+            <RawTsumego tsumego={tsumego} display_coords={display_coords} />
         );
     }
 };

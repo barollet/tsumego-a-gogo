@@ -1,9 +1,10 @@
 #!pylint: disable=missing-class-docstring, missing-module-docstring, too-few-public-methods
 from rest_framework import serializers
+from dynamic_rest.serializers import DynamicModelSerializer
 
 from tsumego_core.models import Collection, Tag, Tsumego
 
-from tsumego_core.sgf import clean_sgf_string
+from tsumego_core.sgf import clean_sgf_headers
 
 # Simple Collection and Tag serializers
 class CollectionSerializer(serializers.ModelSerializer):
@@ -17,28 +18,22 @@ class TagSerializer(serializers.ModelSerializer):
         fields = '__all__'
 
 # Tsumego serializer that makes some sgf verification
-class TsumegoSerializer(serializers.ModelSerializer):
+class TsumegoSerializer(DynamicModelSerializer):
     problem_sgf = serializers.CharField(max_length=400, required=True)
-    solutions_sgf = serializers.CharField(required=True)
+    # overide requirements for view_x and view_y as it is computed by the model
+    view_x = serializers.IntegerField(required=False)
+    view_y = serializers.IntegerField(required=False)
 
     class Meta:
         model = Tsumego
         fields = '__all__'
+        # fields = ['problem_sgf', 'collection', 'number', 'tags']
         #depth = 1 # unwide collection and tag values
 
     def validate_problem_sgf(self, value):
-        """ Check that the blog post is about Django."""
+        """ Clean the sgf value. """
         try:
-            value = clean_sgf_string(value)
-        except Exception as exp:
-            raise serializers.ValidationError(f"Error while parsing SGF file: {str(exp)}")
-        return value
-
-    def validate_solutions_sgf(self, value):
-        """ Same as previous function.
-        # TODO do specific validation """
-        try:
-            value = clean_sgf_string(value)
+            value = clean_sgf_headers(value)
         except Exception as exp:
             raise serializers.ValidationError(f"Error while parsing SGF file: {str(exp)}")
         return value

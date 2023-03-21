@@ -32,27 +32,3 @@ export default function CollectionsEdit() {
         </>
     )
 }
-
-
-/*
-export function SimpleTsumego({id, display_coords=false}) {
-    const [sgf, setSGF] = React.useState("");
-    const [viewport, setViewport] = React.useState(null);
-
-    useEffect(() => {
-    axios_client.get(`tsumego/${id}`).then((response) => {
-        setViewport([response.data.view_x, response.data.view_y]);
-        setSGF(response.data.problem_sgf);
-    });
-    }, [id]);
-
-    if (sgf == "" || viewport == null) {
-        return (null);
-    } else {
-        return (
-            <RawTsumego sgf={sgf} viewport={viewport} display_coords={display_coords} />
-        );
-    }
-
-};
-*/

@@ -58,7 +58,8 @@ function ButtonGroup({create, collection}) {
     const navigate = useNavigate();
 
     function handleSee() {
-        navigate(collection.id.toString())
+        console.log(collection);
+        navigate(`/collection/edit/${collection.id.toString()}`);
     }
 
     function handleCreate() {
@@ -80,8 +81,6 @@ function ButtonGroup({create, collection}) {
     }
 
     function handleUpdate() {
-        console.log(`core/collection/${collection.id}`);
-        console.log(collection);
         axios_client.put(`core/collection/${collection.id}/`, collection).then((response) => {
             // Reload to update visu
             navigate(0);
