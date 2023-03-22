@@ -12,7 +12,7 @@ import Root from "./routes/root";
 import Login from './routes/login';
 import CollectionEdit from './routes/edit-collection';
 import CollectionsEdit from './routes/edit-collections';
-import TsumegoEdit from './routes/tsumego-edit';
+import TsumegoEdit from './routes/edit-tsumego';
 
 import ErrorPage from "./routes/error-page";
 

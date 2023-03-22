@@ -1,5 +1,3 @@
-import { RawTsumego } from "./static_tsumego_view"
-
 import { useNavigate } from "react-router-dom";
 
 import Button from 'react-bootstrap/Button';
@@ -7,6 +5,8 @@ import Button from 'react-bootstrap/Button';
 import axios_client from "../axios";
 
 import "../css/tsumego_card.css"
+
+import { StaticTsumego } from "./tsumego_view";
 
 export default function TsumegoEditCard({tsumego, display_coords=true}) {  
     const navigate = useNavigate();
@@ -27,7 +27,7 @@ export default function TsumegoEditCard({tsumego, display_coords=true}) {
     return (
     <div >
         <div className="tsumego_hover" onClick={handleClick}>
-            <RawTsumego key={tsumego.id} tsumego={tsumego} display_coords={display_coords}/>
+            <StaticTsumego key={tsumego.id} tsumego={tsumego} display_coords={display_coords}/>
         </div>
         <div>
             <Button type="button" variant="outline-danger" onClick={handleDelete}>Delete</Button>

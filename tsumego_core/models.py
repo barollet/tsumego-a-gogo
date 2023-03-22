@@ -2,6 +2,8 @@
 #!pylint: disable=missing-class-docstring, too-few-public-methods
 from django.db import models
 
+from mptt.models import MPTTModel, TreeForeignKey
+
 from tsumego_core.sgf import compute_bounding_box, rotate_top_left_sgfstring, remove_variations
 
 # Create your models here.
@@ -56,8 +58,21 @@ class Tsumego(models.Model):
         ordering = ['collection', 'number']
 
 
+class SolutionNode(MPTTModel):
+    """Describe a solution to a tsumego, solution can be validated or waiting for validation"""
+    # a link to a tsumego will only be for sentinel root nodes
+    tsumego = models.OneToOneField(Tsumego, on_delete=models.CASCADE, blank=True, null=True)
+
+    # attributes for non sentinel node
+    # move is 2 coordinates (x, y) in letter form (like (ej) for exemple)
+    move = models.CharField(max_length=2, blank=True, null=True)
+    validated = models.BooleanField(default=True)
+
+    parent = TreeForeignKey('self', on_delete=models.CASCADE, null=True, blank=True, related_name='children')
+
+
 class TsumegoStatistics(models.Model):
-    tsumego = models.ForeignKey(Tsumego, on_delete=models.CASCADE)
+    tsumego = models.OneToOneField(Tsumego, on_delete=models.CASCADE)
     # statistics for the problem
     # maybe better statistics later
     num_seen = models.IntegerField(default=0)
