@@ -5,7 +5,7 @@ import { create_static_board, create_play_board } from '../jgoboard_functions';
 
 // A raw tsumego visualization with basic customization
 // If only an id is provided for tsumego, the tsumego is fetched from the database
-function RawTsumego({tsumego_prop, display_coords=true, canvas_function=null}) {
+function RawTsumego({tsumego_prop, display_coords=true, click_callback=null}) {
     const containerRef = React.useRef(null);
     const init = React.useRef(false); // Ref to only initialize tsumego view once
 
@@ -30,10 +30,10 @@ function RawTsumego({tsumego_prop, display_coords=true, canvas_function=null}) {
                 };
 
                 // When we have the tsumego we do the rendering
-                if (canvas_function === null) {
+                if (click_callback === null) {
                     create_static_board(containerRef.current, tsumego.problem_sgf, config);
                 } else {
-                    create_play_board(containerRef.current, tsumego.problem_sgf, config);
+                    create_play_board(containerRef.current, tsumego.problem_sgf, config, click_callback);
                 }
                 init.current = true;
             }
@@ -52,4 +52,8 @@ function RawTsumego({tsumego_prop, display_coords=true, canvas_function=null}) {
 // Static tsumego uses raw tsumego without any canvas function
 export function StaticTsumego({tsumego, display_coords=true}) {
     return <RawTsumego tsumego_prop={tsumego} display_coords={display_coords}/>
+}
+
+export function PlayTsumego({tsumego, click_callback, display_coords=true}) {
+    return <RawTsumego tsumego_prop={tsumego} display_coords={display_coords} click_callback={click_callback}/>
 }

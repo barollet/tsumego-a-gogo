@@ -37,9 +37,12 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+
     'rest_framework',
     'corsheaders',
     'knox',
+
+    'mptt', # tree model for solutions
 
     'user_core',
     'tsumego_core',

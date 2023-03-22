@@ -4,7 +4,7 @@ import NavBar from "../components/nav_bar";
 
 import axios_client from "../axios";
 
-import { StaticTsumego } from "../components/tsumego_view";
+import { PlayTsumego } from "../components/tsumego_view";
 
 export default function TsumegoEdit() {
     const {tsumegoId} = useParams();
@@ -20,6 +20,6 @@ export default function TsumegoEdit() {
     return (<>
         <NavBar/>
         <h1>Coucou lo {tsumegoId}</h1>
-        <StaticTsumego tsumego={tsumegoId} display_coords={true}/>
+        <PlayTsumego tsumego={tsumegoId} display_coords={true} click_callback={() => console.log("coucou")}/>
     </>)
 }
