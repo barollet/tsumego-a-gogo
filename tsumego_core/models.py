@@ -58,17 +58,21 @@ class Tsumego(models.Model):
         ordering = ['collection', 'number']
 
 
-class SolutionNode(MPTTModel):
+class VariationNode(MPTTModel):
     """Describe a solution to a tsumego, solution can be validated or waiting for validation"""
     # a link to a tsumego will only be for sentinel root nodes
-    tsumego = models.OneToOneField(Tsumego, on_delete=models.CASCADE, blank=True, null=True)
+    # this way from a tsumego we can access the variation tree
+    tsumego = models.OneToOneField(Tsumego, on_delete=models.CASCADE, blank=True, null=True, related_name="variations")
 
     # attributes for non sentinel node
     # move is 2 coordinates (x, y) in letter form (like (ej) for exemple)
     move = models.CharField(max_length=2, blank=True, null=True)
     validated = models.BooleanField(default=True)
 
+    correct = models.BooleanField(blank=True, null=True)
+
     parent = TreeForeignKey('self', on_delete=models.CASCADE, null=True, blank=True, related_name='children')
+        
 
 
 class TsumegoStatistics(models.Model):

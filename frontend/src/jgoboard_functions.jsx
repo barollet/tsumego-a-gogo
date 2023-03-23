@@ -56,10 +56,13 @@ export function create_play_board(divref, sgf, config, click_callback) {
     jsetup.create(divref, function (canvas) {
         // TODO PLAY
         canvas.addListener('click', function(coord, ev) {
+            // Check bounding box for click
+            if (coord.i < 0 || coord.j < 0 || coord.i >= jsetup.options.view.width || coord.j >= jsetup.options.view.height) {
+                return;
+            }
             placeClickedStone(coord, ev, state);
-
             // The click callback is called after placing the stone
-            click_callback();
+            click_callback(coord);
         });
 
         // Puts transparent stone under the mouse
@@ -72,6 +75,8 @@ export function create_play_board(divref, sgf, config, click_callback) {
             clearLastPos(state);
         });
     });
+
+    return state;
 }
 
 function addStoneHint(coord, state) {

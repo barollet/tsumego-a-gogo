@@ -105,7 +105,7 @@ function ButtonGroup({create, collection}) {
             </Col>
             <Col xs="auto">
                 <div className="vr" />
-                <Button type="button" variant="outline-danger" onClick={handleDelete}>Delete</Button>
+                <Button type="button" variant="danger" onClick={handleDelete}>Delete</Button>
             </Col>
         </>)
     }
