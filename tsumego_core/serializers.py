@@ -50,11 +50,16 @@ class VariationSerializer(serializers.BaseSerializer):
         variation = data.get('variation')
         tsumego_id = data.get('tsumego')
         validated = data.get('validated')
+        correct = data.get('correct')
 
         # checks on validated and tsumego
         if not isinstance(validated, bool):
             raise serializers.ValidationError({
                 'validated': 'This field must be True or False.'
+            })
+        if not isinstance(correct, bool):
+            raise serializers.ValidationError({
+                'correct': 'This field must be True or False.'
             })
         
         # TODO check for exception when tsumego does not exists
@@ -71,16 +76,41 @@ class VariationSerializer(serializers.BaseSerializer):
             'validated': validated,
         } for move in transformed_variation]
 
+        # we set the correct attribute of the last node
+        if internal_variation:
+            internal_variation[-1]['correct'] = correct
+
         return {
             'tsumego': tsumego,
             'nodes': internal_variation,
         }
 
     def to_representation(self, instance):
-        return {
-            'score': instance.score,
-            'player_name': instance.player_name
+        descendants = instance.get_descendants().all()
+
+        # the representation is only the root in the begining
+        representation_tree = {
+            'children': []
         }
+
+        # this map allows to find parents in the representation from the node id
+        id_map = dict([(instance.id, representation_tree)])
+
+        # this is in tree order so parents will be traversed first
+        for descendant in descendants:
+            parent_id = descendant.parent.id
+            parent_node = id_map[parent_id]
+
+            node = {
+                'move': descendant.move,
+                'validated': descendant.validated,
+                'correct': descendant.correct,
+                'children': []
+            }
+            parent_node['children'].append(node)
+            id_map[descendant.id] = node
+
+        return representation_tree
 
     def create(self, validated_data):
         with VariationNode.objects.delay_mptt_updates():
@@ -93,6 +123,7 @@ class VariationSerializer(serializers.BaseSerializer):
                 current_node = VariationNode(
                     move=node['move'],
                     validated=node['validated'],
+                    correct=node.get('correct', None),
                     parent=parent
                 )
                 current_node.save()
@@ -102,7 +133,51 @@ class VariationSerializer(serializers.BaseSerializer):
         return root_node
 
     def update(self, instance, validated_data):
-        pass
+        new_branch = validated_data['nodes']
+        # instance is the root node
+        current_node_in_tree = instance
+        still_inside_tree = True
+        # we get the whole tree in one database call
+        # this is a copy TODO be careful when concurrent updates ? maybe in model manager ?
+        descendants = instance.get_descendants().all()
+
+        with VariationNode.objects.delay_mptt_updates():
+            # level (depth) starts at 1 because the root is already 0
+            for level, new_node in enumerate(new_branch, start=1):
+                # check if the move is already in the tree
+                if still_inside_tree:
+                    tree_node = descendants.filter(level=level, move=new_node['move'])
+                    if tree_node:
+                        # we found the node in the tree
+                        # check if we need to update the validation and correct state
+                        # validated has priority over non validated
+                        tree_node.validated |= new_node['validated']
+                        # correct should be set for leaf nodes only
+                        if level < len(new_branch) - 1 and tree_node.correct is not None:
+                            tree_node.correct = None
+
+                        tree_node.save()
+                        current_node_in_tree = tree_node
+                        continue
+
+                # we didn't found the node in the tree
+                # add the current node as a children
+                new_node_instance = VariationNode(
+                    move=new_node['move'],
+                    validated=new_node['validated'],
+                    correct=new_node.get('correct', None),
+                    parent=current_node_in_tree
+                )
+
+                new_node_instance.save()
+                current_node_in_tree = new_node_instance
+                # repeat for the end of the branch
+                still_inside_tree = False
+
+            # all the variation is processed now
+
+        # return the root node
+        return instance
 
     def save(self, **kwargs):
         # we need to find the tsumego root node
@@ -110,6 +185,6 @@ class VariationSerializer(serializers.BaseSerializer):
         tsumego = self.validated_data['tsumego']
         # if the tsumego already has variations, we update the root node
         if hasattr(tsumego, 'variations'):
-            self.instance = tsumego
+            self.instance = tsumego.variations
         super().save(tsumego=tsumego, **kwargs)
     

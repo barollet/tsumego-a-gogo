@@ -72,7 +72,7 @@ class VariationNode(MPTTModel):
     correct = models.BooleanField(blank=True, null=True)
 
     parent = TreeForeignKey('self', on_delete=models.CASCADE, null=True, blank=True, related_name='children')
-        
+
 
 
 class TsumegoStatistics(models.Model):

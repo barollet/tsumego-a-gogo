@@ -1,4 +1,4 @@
-import { useRef, useState } from 'react';
+import { useRef, useState, useEffect } from 'react';
 import { useParams } from "react-router-dom";
 
 import axios_client from "../axios";
@@ -16,8 +16,19 @@ import { PlayTsumego } from "../components/tsumego_view";
 export default function TsumegoEdit() {
     const {tsumegoId} = useParams();
     const [ validated, setValidated ] = useState(false);
+    const [ correct, setCorrect ] = useState(false);
 
-    let variation = useRef([]); 
+    const [ variations, setVariations ] = useState(false);
+
+
+    let variation = useRef([]);
+
+    useEffect(() => {
+        axios_client.get(`core/variation/${tsumegoId}`).then((response) => {
+            console.log(response.data);
+            setVariations(response.data)
+        }).catch((error) => console.log(error.message));
+    }, []);
 
     // Click callback to add the next move to the variation
     function click_callback(coord) {
@@ -29,6 +40,7 @@ export default function TsumegoEdit() {
             tsumego: tsumegoId,
             variation: variation.current,
             validated,
+            correct,
         }).then((response) => {
             console.log(response);
         });
@@ -50,6 +62,7 @@ export default function TsumegoEdit() {
         <Row>
             <Col xs="auto">
                 <Switch label="Set solution as validated directly" setChange={setValidated} init={false} />
+                <Switch label="Set solution as correct directly" setChange={setCorrect} init={false} />
             </Col>
             <Col xs="auto">
                 <Button type="button" variant="secondary" onClick={handleUpdateVariation}>Update</Button>
