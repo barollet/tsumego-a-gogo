@@ -7,9 +7,6 @@ import Form from 'react-bootstrap/Form';
 import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
 
-import axios_client from "../axios";
-
-
 function ShowId({init, show}) {
     if (show) {
         return <>
@@ -56,7 +53,7 @@ function EditEnableCheckbox({setter, init}) {
 /* Button group to trigger commands
 This may be abstracted in the future with other editions
 */
-function ButtonGroup({create, collection}) {
+function ButtonGroup({collection, handlers}) {
     const navigate = useNavigate();
 
     function handleSee() {
@@ -64,36 +61,9 @@ function ButtonGroup({create, collection}) {
         navigate(`/collection/edit/${collection.id.toString()}`);
     }
 
-    function handleCreate() {
-        axios_client.post(`core/collection/`, collection).then((response) => {
-            // Reload to update visu
-            navigate(0);
-        }).catch((error) => {
-            console.log(error.response);
-        });
-    }
-
-    function handleDelete() {
-        axios_client.delete(`core/collection/${collection.id}`).then((response) => {
-            // Reload to update visu
-            navigate(0);
-        }).catch((error) => {
-            console.log(error.response);
-        });
-    }
-
-    function handleUpdate() {
-        axios_client.put(`core/collection/${collection.id}/`, collection).then((response) => {
-            // Reload to update visu
-            navigate(0);
-        }).catch((error) => {
-            console.log(error.response);
-        });
-    }
-
-    if (create) {
+    if (handlers.create_f !== null) {
         return <Col xs="auto">
-            <Button type="button" variant="success" onClick={handleCreate}>Create</Button>
+            <Button type="button" variant="success" onClick={() => handlers.create_f(collection)}>Create</Button>
         </Col>
     } else {
         return (<>
@@ -101,11 +71,11 @@ function ButtonGroup({create, collection}) {
                 <Button type="button" variant="primary" onClick={handleSee}>See</Button>
             </Col>
             <Col xs="auto">
-                <Button type="button" variant="secondary" onClick={handleUpdate}>Update</Button>
+                <Button type="button" variant="secondary" onClick={() => handlers.update_f(collection)}>Update</Button>
             </Col>
             <Col xs="auto">
                 <div className="vr" />
-                <Button type="button" variant="danger" onClick={handleDelete}>Delete</Button>
+                <Button type="button" variant="danger" onClick={() => {if(window.confirm("Are you sure?")) handlers.delete_f(collection.id)}}>Delete</Button>
             </Col>
         </>)
     }
@@ -114,7 +84,7 @@ function ButtonGroup({create, collection}) {
 /* Default collection line form with state and creation, update, deletion management
 If the create option is set, the form is in "creation" mode and allows creation instead of modification/deletion
 */
-export default function CollectionForm({collection, create=false}) {
+export default function CollectionForm({collection, update_f=null, delete_f=null, create_f=null}) {
     // Init an empty object as initial collection if collection is null
     const [collection_state, setCollection] = useState(collection);
 
@@ -130,13 +100,17 @@ export default function CollectionForm({collection, create=false}) {
         <Form>
             <Row>
 
-            <ShowId init={collection} show={!create} />
+            <ShowId init={collection} show={create_f === null} />
 
             <EditCollectionName setter={setCollectionElem} init={collection}/>
 
             <EditEnableCheckbox setter={setCollectionElem} init={collection}/>
 
-            <ButtonGroup create={create} collection={collection_state}/>
+            <ButtonGroup collection={collection_state} handlers={{
+                create_f,
+                update_f,
+                delete_f,
+            }}/>
 
             </Row>
         </Form>

@@ -3,10 +3,10 @@ import { useState, useEffect } from "react";
 import {sendRequest} from "../axios";
 
 export function useAxios(request_config) {
-    const [trigger, {data, error}] = useLazyAxios(request_config);
+    const [trigger, data, error, setData] = useLazyAxios(request_config);
 
-    trigger();
-    return [{data, error}]
+    useEffect(() => trigger(), []);
+    return [data, error, setData]
 }
 
 // Trigger an axios request when the trigger function is called
@@ -38,5 +38,5 @@ export function useLazyAxios(request_config) {
         }
     }, [triggered]);
 
-    return [() => setTrigger(true), data, error]
+    return [() => setTrigger(true), data, error, setData]
 }
