@@ -74,6 +74,12 @@ export default function TsumegoEdit() {
             </Col>
         </Row>
 
-        <PlayTsumego tsumego={tsumegoId} display_coords={true} click_callback={click_callback} back_callback={handleBack}/>
+        <PlayTsumego
+            tsumego={tsumegoId}
+            display_coords={true}
+            show_variations={true}
+            click_callback={click_callback}
+            back_callback={handleBack}
+        />
     </>)
 }

@@ -34,3 +34,4 @@ class VariationViewSet(viewsets.GenericViewSet):
 
     def destroy(self, request, pk=None):
         """Deletes variation up the the first common ancestor with another branch"""
+        # TODO what about validated ?

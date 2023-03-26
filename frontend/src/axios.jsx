@@ -16,3 +16,14 @@ if (token !== null) {
 }
 
 export default axios_client;
+
+// This function can be used to get response and error from request in an async way like this:
+// const { response, error } = sendRequest(config);
+export async function sendRequest(config) {
+    try {
+        const response = await axios_client.request(config);
+        return { response }
+    } catch (error) {
+        return { error }
+    }
+}
