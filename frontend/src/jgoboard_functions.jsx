@@ -141,6 +141,7 @@ function placeClickedStone(coord, ev, state) {
         }
 
         node.setMark(coord, JGO.MARK.CIRCLE); // mark move
+
         state.lastMove = coord;
 
         if(play.ko) {

@@ -532,7 +532,9 @@ var $lKvpy = parcelRequire("lKvpy");
     /** Black stone */ BLACK: 1,
     /** White stone */ WHITE: 2,
     /** Semi-transparent black stone */ DIM_BLACK: 3,
-    /** Semi-transparent white stone */ DIM_WHITE: 4
+    /** Semi-transparent white stone */ DIM_WHITE: 4,
+    /** Correct */ GREEN: 5,
+    /** Incorrect */ RED: 6
 };
 // Alias all objects into globals
 $lKvpy.extend(module.exports, module.exports.INTERSECTION);
@@ -548,7 +550,11 @@ $lKvpy.extend(module.exports, module.exports.INTERSECTION);
     /** Circle */ CIRCLE: "0",
     /** Cross */ CROSS: "*",
     /** Black territory */ BLACK_TERRITORY: "-",
-    /** White territory */ WHITE_TERRITORY: "+"
+    /** White territory */ WHITE_TERRITORY: "+",
+    /** Correct */ CORRECT: "C",
+    /** Correct waiting */ CORRECT_WAITING: "c",
+    /** Incorrect */ INCORRECT: "X",
+    /** Incorrect waiting */ INCORRECT_WAITING: "x"
 };
 /**
  * Board coordinate array.
@@ -580,7 +586,26 @@ var $fxPB8 = parcelRequire("fxPB8");
 };
 $9234781b1ef5a736$var$Stones.prototype.drawStone = function(ctx, type, ox, oy, scale) {
     if (!scale) scale = 1;
-    var stone = type == $fxPB8.BLACK || type == $fxPB8.DIM_BLACK ? this.images.black : this.images.white;
+    //var stone = (type == C.BLACK || type == C.DIM_BLACK) ? this.images.black : this.images.white;
+    var stone;
+    switch(type){
+        case $fxPB8.BLACK:
+        case $fxPB8.DIM_BLACK:
+            stone = this.images.black;
+            break;
+        case $fxPB8.WHITE:
+        case $fxPB8.DIM_WHITE:
+            stone = this.images.white;
+            break;
+        case $fxPB8.GREEN:
+            stone = this.images.green;
+            break;
+        case $fxPB8.RED:
+            stone = this.images.red;
+            break;
+        default:
+            stone = this.images.black;
+    }
     if (!stone) {
         ctx.fillStyle = type == $fxPB8.WHITE ? "#FFFFFF" : "#000000";
         ctx.beginPath();
@@ -634,6 +659,16 @@ $9234781b1ef5a736$var$Stones.prototype.drawMark = function(ctx, mark, ox, oy) {
         case $fxPB8.MARK.WHITE_TERRITORY:
             ctx.globalAlpha = 1;
             this.drawStone(ctx, $fxPB8.WHITE, ox, oy, 0.5);
+            break;
+        case $fxPB8.MARK.CORRECT:
+        case $fxPB8.MARK.CORRECT_WAITING:
+            ctx.globalAlpha = mark == $fxPB8.MARK.CORRECT ? 1 : 0.5;
+            this.drawStone(ctx, $fxPB8.GREEN, ox, oy, 0.5);
+            break;
+        case $fxPB8.MARK.INCORRECT:
+        case $fxPB8.MARK.INCORRECT_WAITING:
+            ctx.globalAlpha = mark == $fxPB8.MARK.INCORRECT ? 1 : 0.5;
+            this.drawStone(ctx, $fxPB8.RED, ox, oy, 0.5);
             break;
         case $fxPB8.MARK.SELECTED:
             ctx.globalAlpha = 0.5;
@@ -1867,6 +1902,8 @@ $7d622b14d58a3e86$exports.BOARD.large = {
     textures: {
         black: "/large/black.png",
         white: "/large/white.png",
+        red: "/large/red.png",
+        green: "/large/green.png",
         shadow: "/large/shadow.png",
         board: "/large/shinkaya.jpg"
     },

@@ -11,6 +11,8 @@ JGO.BOARD.large = {
     textures: {
         black: '/large/black.png',
         white: '/large/white.png',
+        red: '/large/red.png',
+        green: '/large/green.png',
         shadow:'/large/shadow.png',
         board: '/large/shinkaya.jpg'
     },

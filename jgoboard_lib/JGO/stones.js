@@ -23,7 +23,28 @@ var Stones = function(options, images) {
 
 Stones.prototype.drawStone = function(ctx, type, ox, oy, scale) {
   if(!scale) scale = 1;
-  var stone = (type == C.BLACK || type == C.DIM_BLACK) ? this.images.black : this.images.white;
+
+  //var stone = (type == C.BLACK || type == C.DIM_BLACK) ? this.images.black : this.images.white;
+
+  var stone;
+  switch(type) {
+    case C.BLACK:
+    case C.DIM_BLACK:
+      stone = this.images.black;
+      break;
+    case C.WHITE:
+    case C.DIM_WHITE:
+      stone = this.images.white;
+      break;
+    case C.GREEN:
+      stone = this.images.green;
+      break;
+    case C.RED:
+      stone = this.images.red;
+      break;
+    default:
+      stone = this.images.black;
+  };
 
   if(!stone) { // BW
     ctx.fillStyle = (type == C.WHITE) ? '#FFFFFF' : '#000000';
@@ -97,6 +118,18 @@ Stones.prototype.drawMark = function(ctx, mark, ox, oy) {
     case C.MARK.WHITE_TERRITORY:
       ctx.globalAlpha=1;
       this.drawStone(ctx, C.WHITE, ox, oy, 0.5);
+      break;
+
+    case C.MARK.CORRECT:
+    case C.MARK.CORRECT_WAITING:
+      ctx.globalAlpha= (mark == C.MARK.CORRECT) ? 1 : 0.5;
+      this.drawStone(ctx, C.GREEN, ox, oy, 0.5);
+      break;
+
+    case C.MARK.INCORRECT:
+    case C.MARK.INCORRECT_WAITING:
+      ctx.globalAlpha= (mark == C.MARK.INCORRECT) ? 1 : 0.5;
+      this.drawStone(ctx, C.RED, ox, oy, 0.5);
       break;
 
     case C.MARK.SELECTED:
