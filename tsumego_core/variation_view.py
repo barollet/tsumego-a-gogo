@@ -27,8 +27,14 @@ class VariationViewSet(viewsets.GenericViewSet):
     def retrieve(self, request, pk=None):
         """Returns the variation representation for a given tsumego"""
         # TODO error management
-        root_node = Tsumego.objects.get(id=pk).variations
-        representation = VariationSerializer(root_node).data
+        tsumego = Tsumego.objects.get(id=pk)
+        if not hasattr(tsumego, 'variations'):
+            # create empty root node
+            root_node = VariationNode(tsumego=tsumego)
+            root_node.save()
+
+        representation = VariationSerializer(tsumego.variations).data
+
         return Response(representation)
 
 

@@ -1,7 +1,7 @@
-import { useRef, useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { useParams } from "react-router-dom";
 
-import axios_client from "../axios";
+import axios_client, { sendRequest } from "../axios";
 
 import Button from 'react-bootstrap/Button';
 import Row from 'react-bootstrap/Row';
@@ -9,60 +9,73 @@ import Col from 'react-bootstrap/Col';
 
 import NavBar from "../components/nav_bar";
 import Switch from '../components/small_components/switch';
-import { PlayTsumego } from "../components/tsumego_view";
+import { VariationTsumego } from "../components/tsumego_view";
 
+import useBoardState from '../hooks/use_board_state';
 
+const initCorrect = true;
+const initValidated = false;
 
 export default function TsumegoEdit() {
-    const {tsumegoId} = useParams();
-    const [ validated, setValidated ] = useState(false);
-    const [ correct, setCorrect ] = useState(false);
+    const { tsumegoId } = useParams();
+    const [ validated, setValidated ] = useState(initValidated);
+    const [ correct, setCorrect ] = useState(initCorrect);
 
-    const [ variations, setVariations ] = useState(false);
+    const [ variations, setVariations ] = useState(null);
 
-
-    let variation = useRef([]);
+    // We use a ref instead of a state because the board display is not managed by React
+    const [ board_state, setBoardState ] = useBoardState();
 
     useEffect(() => {
-        axios_client.get(`core/variation/${tsumegoId}`).then((response) => {
-            console.log(response.data);
-            setVariations(response.data)
-        }).catch((error) => console.log(error.message));
+        async function fetchVariations() {
+            const { response, error } = await sendRequest({
+                url: `core/variation/${tsumegoId}`,
+            });
+            if (response) {
+                setVariations(response.data)
+            } else {
+                console.log(error.message);
+            }
+        }
+        fetchVariations();
     }, []);
 
-    // Click callback to add the next move to the variation
-    function click_callback(coord) {
-        variation.current.push(coord);
-    }
-
-    function handleUpdateVariation() {
-        axios_client.post(`core/variation/`, {
-            tsumego: tsumegoId,
-            variation: variation.current,
-            validated,
-            correct,
-        }).then((response) => {
-            console.log(response);
+    async function handleUpdateVariation() {
+        if (board_state.current_variation.length === 0) {
+            alert("Variation is empty, nothing to update");
+            return;
+        }
+        const { response, error } = await sendRequest({
+            url: `core/variation/`,
+            method: 'post',
+            data: {
+                tsumego: tsumegoId,
+                variation: board_state.current_variation,
+                validated,
+                correct,
+            }
         });
+        if (response) {
+            console.log(response);
+            // TODO update variations
+            //setVariations(response.data)
+        } else {
+            console.log(error.message);
+        }
     }
 
     function handleDeleteVariation() {
         console.log("delete");
-        console.log(variation);
+        console.log(board_state.current_variation);
     }
-
-    function handleBack() {
-        variation.current.pop();
-    }
-
 
     return (<>
         <NavBar/>
         <h1>Coucou lo {tsumegoId}</h1>
         <Row>
             <Col xs="auto">
-                <Switch label="Set solution as validated directly" setChange={setValidated} init={false} />
-                <Switch label="Set solution as correct directly" setChange={setCorrect} init={false} />
+                <Switch label="Set solution as validated directly" setChange={setValidated} init={initValidated} />
+                <Switch label="Set solution as correct directly" setChange={setCorrect} init={initCorrect} />
             </Col>
             <Col xs="auto">
                 <Button type="button" variant="secondary" onClick={handleUpdateVariation}>Update</Button>
@@ -74,12 +87,14 @@ export default function TsumegoEdit() {
             </Col>
         </Row>
 
-        <PlayTsumego
+        <VariationTsumego
             tsumego={tsumegoId}
             display_coords={true}
             show_variations={true}
-            click_callback={click_callback}
-            back_callback={handleBack}
+            variations={variations}
+
+            board_state={board_state}
+            setBoardState={setBoardState}
         />
     </>)
 }

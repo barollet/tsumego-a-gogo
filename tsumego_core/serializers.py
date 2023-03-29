@@ -74,11 +74,8 @@ class VariationSerializer(serializers.BaseSerializer):
         internal_variation = [{
             'move': move,
             'validated': validated,
+            'correct': correct,
         } for move in transformed_variation]
-
-        # we set the correct attribute of the last node
-        if internal_variation:
-            internal_variation[-1]['correct'] = correct
 
         return {
             'tsumego': tsumego,
@@ -123,7 +120,7 @@ class VariationSerializer(serializers.BaseSerializer):
                 current_node = VariationNode(
                     move=node['move'],
                     validated=node['validated'],
-                    correct=node.get('correct', None),
+                    correct=node['correct'],
                     parent=parent
                 )
                 current_node.save()
@@ -148,13 +145,13 @@ class VariationSerializer(serializers.BaseSerializer):
                 if still_inside_tree:
                     tree_node = descendants.filter(level=level, move=new_node['move'])
                     if tree_node:
+                        tree_node = tree_node[0]
                         # we found the node in the tree
                         # check if we need to update the validation and correct state
                         # validated has priority over non validated
                         tree_node.validated |= new_node['validated']
-                        # correct should be set for leaf nodes only
-                        if level < len(new_branch) - 1 and tree_node.correct is not None:
-                            tree_node.correct = None
+                        # same goes for correct
+                        tree_node.correct |= new_node['correct']
 
                         tree_node.save()
                         current_node_in_tree = tree_node
@@ -165,7 +162,7 @@ class VariationSerializer(serializers.BaseSerializer):
                 new_node_instance = VariationNode(
                     move=new_node['move'],
                     validated=new_node['validated'],
-                    correct=new_node.get('correct', None),
+                    correct=new_node['correct'],
                     parent=current_node_in_tree
                 )
 
