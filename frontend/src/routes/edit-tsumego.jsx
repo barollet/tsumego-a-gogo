@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useParams } from "react-router-dom";
 
-import axios_client, { sendRequest } from "../axios";
+import { sendRequest } from "../axios";
 
 import Button from 'react-bootstrap/Button';
 import Row from 'react-bootstrap/Row';
@@ -12,6 +12,8 @@ import Switch from '../components/small_components/switch';
 import { VariationTsumego } from "../components/tsumego_view";
 
 import useBoardState from '../hooks/use_board_state';
+
+import { deleteCurrentVariation, updateCurrentVariation } from '../jgoboard_functions';
 
 const initCorrect = true;
 const initValidated = false;
@@ -56,9 +58,9 @@ export default function TsumegoEdit() {
             }
         });
         if (response) {
-            console.log(response);
-            // TODO update variations
-            //setVariations(response.data)
+            if (response.data.message) {
+                updateCurrentVariation(board_state, correct, validated);
+            }
         } else {
             console.log(error.message);
         }
@@ -69,7 +71,6 @@ export default function TsumegoEdit() {
             alert("Variation is empty, nothing to delete");
             return;
         }
-        console.log(board_state.current_variation);
         // TODO if don't delete leaf node => confirm
         const { response, error } = await sendRequest({
             url: `core/variation/${tsumegoId}`,
@@ -81,9 +82,9 @@ export default function TsumegoEdit() {
             }
         });
         if (response) {
-            console.log(response);
-            // TODO update variations
-            //setVariations(response.data)
+            if (response.data.message) {
+                deleteCurrentVariation(board_state);
+            }
         } else {
             console.log(error.message);
         }
@@ -91,7 +92,7 @@ export default function TsumegoEdit() {
 
     return (<>
         <NavBar/>
-        <h1>Coucou lo {tsumegoId}</h1>
+        <h1>Tsumego {tsumegoId}</h1>
         <Row>
             <Col xs="auto">
                 <Switch label="Set solution as validated directly" setChange={setValidated} init={initValidated} />

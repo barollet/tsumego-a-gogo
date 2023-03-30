@@ -102,41 +102,93 @@ export function create_play_board(divref, sgf, config) {
     return state;
 }
 
-// Computes the current position in the variation tree from the variation
-function findVariationNode(state) {
-    var current_node = state.variations.children;
+// Computes the current position in the tree from the current variation
+function findVariationNode(state, get_parent=false) {
+    var current_node = state.variations;
+    var parent = state.variations;
     for(const node of state.current_variation) {
-        const next_node = current_node.find(e => e.move === node.toString());
+        // Find the child with the corresponding move
+        const next_node = current_node.children.find(e => e.move === node.toString());
         if (next_node) {
-            current_node = next_node.children;
+            parent = current_node;
+            current_node = next_node;
         } else {
             // If we are out of the variation we don't return anything
-            return [];
+            return;
         }
     }
-    return current_node;
+    if (get_parent) {
+        return [current_node, parent]
+    } else {
+        return current_node;
+    }
+}
+
+export function deleteCurrentVariation(state) {
+    const [ delete_node, parent_node ] = findVariationNode(state, get_parent=true);
+    const index = parent_node.children.indexOf(delete_node);
+    if (index > -1) {
+        // Remove the node if found (it should be found)
+        parent_node.children.splice(index, 1);
+    } else {
+        console.log("Warning couldn't find the node to delete in parent");
+    }
+    updateVariationsMarks(state);
+}
+
+export function updateCurrentVariation(state, correct, validated) {
+    var current_node = state.variations;
+    var still_in_tree = true;
+    for (const node of state.current_variation) {
+        // Find the node in the variations
+        if (still_in_tree) {
+            const next_node = current_node.children.find(e => e.move === node.toString());
+
+            // If we found the node into the tree we advance
+            if (next_node) {
+                current_node = next_node;
+                current_node.correct |= correct;
+                current_node.validated |= validated;
+                continue;
+            }
+            still_in_tree = false;
+        }
+        // If not we update the tree
+        const new_node = {
+            move: node.toString(),
+            correct,
+            validated,
+            children: [],
+        };
+        // Add the new node to current node children
+        current_node.children.push(new_node);
+        current_node = new_node;
+    }
+    updateVariationsMarks(state);
 }
 
 function updateVariationsMarks(state) { 
     clearVariationsMarks(state);
     if (state.show_variation) {
-        const node_children = findVariationNode(state);
-        for(const move of node_children) {
-            var mark_type;
-            if (move.correct) {
-                if (move.validated) {
-                    mark_type = JGO.MARK.CORRECT;
+        const current_node = findVariationNode(state);
+        if (current_node) {
+            for(const move of current_node.children) {
+                var mark_type;
+                if (move.correct) {
+                    if (move.validated) {
+                        mark_type = JGO.MARK.CORRECT;
+                    } else {
+                        mark_type = JGO.MARK.CORRECT_WAITING;
+                    }
+                } else if (move.validated) {
+                    mark_type = JGO.MARK.INCORRECT;
                 } else {
-                    mark_type = JGO.MARK.CORRECT_WAITING;
+                    mark_type = JGO.MARK.INCORRECT_WAITING;
                 }
-            } else if (move.validated) {
-                mark_type = JGO.MARK.INCORRECT;
-            } else {
-                mark_type = JGO.MARK.INCORRECT_WAITING;
+    
+                state.jboard.setMark(new JGO.Coordinate(move.move), mark_type);
+                state.last_variations_marks.push(move.move);
             }
-
-            state.jboard.setMark(new JGO.Coordinate(move.move), mark_type);
-            state.last_variations_marks.push(move.move);
         }
     }
 }
