@@ -64,9 +64,29 @@ export default function TsumegoEdit() {
         }
     }
 
-    function handleDeleteVariation() {
-        console.log("delete");
+    async function handleDeleteVariation() {
+        if (board_state.current_variation.length === 0) {
+            alert("Variation is empty, nothing to delete");
+            return;
+        }
         console.log(board_state.current_variation);
+        // TODO if don't delete leaf node => confirm
+        const { response, error } = await sendRequest({
+            url: `core/variation/${tsumegoId}`,
+            method: 'delete',
+            data: {
+                variation: board_state.current_variation,
+                validated, // They are not used but this is a placeholder
+                correct, // Same maybe change this in backend
+            }
+        });
+        if (response) {
+            console.log(response);
+            // TODO update variations
+            //setVariations(response.data)
+        } else {
+            console.log(error.message);
+        }
     }
 
     return (<>

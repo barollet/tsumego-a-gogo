@@ -61,7 +61,12 @@ class VariationSerializer(serializers.BaseSerializer):
             raise serializers.ValidationError({
                 'correct': 'This field must be True or False.'
             })
-        
+
+        if not variation:
+            raise serializers.ValidationError({
+                'variation': 'This field should not be an empty list.'
+            })
+
         # TODO check for exception when tsumego does not exists
         tsumego = Tsumego.objects.get(id=tsumego_id)
 

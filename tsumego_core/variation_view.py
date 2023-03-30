@@ -41,3 +41,30 @@ class VariationViewSet(viewsets.GenericViewSet):
     def destroy(self, request, pk=None):
         """Deletes variation up the the first common ancestor with another branch"""
         # TODO what about validated ?
+        # TODO error handling
+        serializer = VariationSerializer(data={**request.data, 'tsumego': pk})
+        if not serializer.is_valid():
+            return Response({"error": serializer.errors})
+
+        # find the node that we want to delete
+        # get the root node
+        tsumego = Tsumego.objects.get(id=pk)
+        if not hasattr(tsumego, 'variations'):
+            return Response({"error": "The tsumego has no variations"})
+        root_node = tsumego.variations
+        # we explore the variation in the tree
+        descendants = root_node.get_descendants().all() # like in the serializer classe, it makes a copy
+        for level, node in enumerate(serializer.validated_data['nodes'], start=1):
+            tree_node = descendants.filter(level=level, move=node['move'])
+            # if we cannot find the move in the tree we return an error
+            if not tree_node:
+                return Response({"error": "Invalid variation, cannot be found in the tree"})
+        # we assign the last value of tree_node
+        delete_node = tree_node[0]
+
+        # now we delete the node and all descendants
+        delete_tree = delete_node.get_descendants(include_self=True)
+        with VariationNode.objects.delay_mptt_updates():
+            delete_tree.delete()
+
+        return Response({"message": "successfully delete variation"})
