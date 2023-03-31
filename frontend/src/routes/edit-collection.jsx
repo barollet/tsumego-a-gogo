@@ -2,6 +2,7 @@ import React from "react";
 import { useParams } from "react-router-dom";
 
 import Container from 'react-bootstrap/Container';
+import Button from 'react-bootstrap/esm/Button';
 
 import NavBar from "../components/nav_bar";
 
@@ -23,7 +24,7 @@ export default function CollectionEdit() {
         axios_client.get(`core/tsumego/?filter{collection}=${collectionId}`).then((response) => {
             // TODO put back in normal order and not last inserted ?
             // Do button to toggle this
-            setTsumegos(response.data.tsumegos.reverse());
+            setTsumegos(response.data.tsumegos);
         });
     }, []);
 
@@ -36,6 +37,8 @@ export default function CollectionEdit() {
         <TsumegoUpload collectionId={collectionId}/>
 
         <p>Collection {collectionId}</p>
+
+        <Button type="button" variant="primary" onClick={() => alert("TODO Not implemented yet")}>Reverse order</Button>
 
         <div style={divStyle}>
             {tsumegos.map((tsumego) => <TsumegoEditCard key={tsumego.id} tsumego={tsumego} display_coords={false}/>)}

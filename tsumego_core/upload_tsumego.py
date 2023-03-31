@@ -1,10 +1,13 @@
 """Logic to upload on or several tsumegos"""
 import zipfile
+import re
 
 from rest_framework.response import Response
 
 from tsumego_core.models import Tsumego
 from tsumego_core.serializers import TsumegoSerializer
+
+NUMBER_RE = re.compile(r'\d+')
 
 def upload_action(request, collection_key):
     """upload one or more several tsumegos in the database depending on the file type"""
@@ -64,7 +67,10 @@ def create_tsumego_from_file(sgf_file, collection_id: int, taken_numbers: [int])
 def create_tsumegos_from_archive(archive_file, collection_id: int, taken_numbers: [int]):
     """Extract and add tsumegos in the given zip archive"""
     with zipfile.ZipFile(archive_file) as archive:
-        for name in archive.namelist():
+        for name in sorted(archive.namelist(), key=extract_number):
+            # we ignore directory names
+            if name.endswith('/'):
+                continue
             if not name.endswith(".sgf"):
                 return f"Invalid file {name} in archive"
 
@@ -74,3 +80,8 @@ def create_tsumegos_from_archive(archive_file, collection_id: int, taken_numbers
                     return err
 
         return None
+
+def extract_number(name):
+    """Extract the numbers in an sgf name if available"""
+    numbers = re.findall(NUMBER_RE, name)
+    return list(map(int, numbers))
