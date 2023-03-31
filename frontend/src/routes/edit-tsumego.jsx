@@ -15,13 +15,11 @@ import useBoardState from '../hooks/use_board_state';
 
 import { deleteCurrentVariation, updateCurrentVariation } from '../jgoboard_functions';
 
-const initCorrect = true;
 const initValidated = false;
 
 export default function TsumegoEdit() {
     const { tsumegoId } = useParams();
     const [ validated, setValidated ] = useState(initValidated);
-    const [ correct, setCorrect ] = useState(initCorrect);
 
     const [ variations, setVariations ] = useState(null);
 
@@ -42,7 +40,7 @@ export default function TsumegoEdit() {
         fetchVariations();
     }, []);
 
-    async function handleUpdateVariation() {
+    async function handleUpdateVariation(correct) {
         if (board_state.current_variation.length === 0) {
             alert("Variation is empty, nothing to update");
             return;
@@ -78,7 +76,7 @@ export default function TsumegoEdit() {
             data: {
                 variation: board_state.current_variation,
                 validated, // They are not used but this is a placeholder
-                correct, // Same maybe change this in backend
+                correct: true, // Same maybe change this in backend
             }
         });
         if (response) {
@@ -96,10 +94,12 @@ export default function TsumegoEdit() {
         <Row>
             <Col xs="auto">
                 <Switch label="Set solution as validated directly" setChange={setValidated} init={initValidated} />
-                <Switch label="Set solution as correct directly" setChange={setCorrect} init={initCorrect} />
             </Col>
             <Col xs="auto">
-                <Button type="button" variant="secondary" onClick={handleUpdateVariation}>Update</Button>
+                <Button type="button" variant="success" onClick={() => handleUpdateVariation(true)}>Set Correct</Button>
+            </Col>
+            <Col xs="auto">
+                <Button type="button" variant="secondary" onClick={() => handleUpdateVariation(false)}>Set Incorrect</Button>
             </Col>
             <Col xs="auto">
                 <Button type="button" variant="danger" onClick={handleDeleteVariation}>Delete</Button>
