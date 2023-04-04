@@ -62,6 +62,8 @@ def create_tsumego_from_file(sgf_file, collection_id: int, taken_numbers: [int])
     if tsumego.is_valid():
         tsumego.save()
         return None # no error, everything when fine
+    print(tsumego)
+    print(tsumego.errors)
     return "Couldn't create tsumego"
 
 def create_tsumegos_from_archive(archive_file, collection_id: int, taken_numbers: [int]):

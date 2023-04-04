@@ -21,7 +21,7 @@ class TagSerializer(serializers.ModelSerializer):
 
 # Tsumego serializer that makes some sgf verification
 class TsumegoSerializer(DynamicModelSerializer):
-    problem_sgf = serializers.CharField(max_length=400, required=True)
+    problem_sgf = serializers.CharField(max_length=1000, required=True)
     # overide requirements for view_x and view_y as it is computed by the model
     view_x = serializers.IntegerField(required=False)
     view_y = serializers.IntegerField(required=False)

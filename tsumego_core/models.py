@@ -33,7 +33,7 @@ class Tag(models.Model):
 class Tsumego(models.Model):
     """Tsumego model class.
     For administration purpose they should always be stored on top left corner and black to play"""
-    problem_sgf = models.CharField(max_length=400)
+    problem_sgf = models.CharField(max_length=1000)
     collection = models.ForeignKey(Collection, on_delete=models.CASCADE)
     number = models.IntegerField() # tsumegos in a collection are sorted by number
     tags = models.ManyToManyField(Tag, blank=True)

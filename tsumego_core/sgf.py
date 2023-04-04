@@ -95,6 +95,10 @@ def compute_quadrant(game_tree: sgf.Sgf_game) -> bool:
         quad_x += [-1, 1][m_x <= 11]
         quad_y += [-1, 1][m_y <= 11]
 
+    # if less than 80% of the moves are on the same quadrant, keep the original orientation
+    if abs(quad_x) < 0.8*len(moves) or abs(quad_y) < 0.8*len(moves):
+        return TOP_LEFT
+
     # normalize
     quad_x /= abs(quad_x)
     quad_y /= abs(quad_y)
