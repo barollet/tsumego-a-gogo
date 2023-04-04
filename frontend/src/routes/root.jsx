@@ -5,6 +5,7 @@ export default function Root() {
       <h1>Hello world</h1>
       <p><Link to="login/">Login page</Link></p>
       <p><Link to="collection/edit">See collections</Link></p>
-
+      <p>Game modes</p>
+      <p><Link to="play/collections">Choisir une collection</Link></p>
     </>);
   }

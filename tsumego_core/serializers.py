@@ -7,7 +7,7 @@ from tsumego_core.models import Collection, Tag, Tsumego, VariationNode
 from tsumego_core.sgf import clean_sgf_headers
 
 # Simple Collection and Tag serializers
-class CollectionSerializer(serializers.ModelSerializer):
+class CollectionSerializer(DynamicModelSerializer):
     number = serializers.IntegerField(required=False)
 
     class Meta:

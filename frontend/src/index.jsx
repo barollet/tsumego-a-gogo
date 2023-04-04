@@ -15,6 +15,7 @@ import CollectionsEdit from './routes/edit-collections';
 import TsumegoEdit from './routes/edit-tsumego';
 
 import ErrorPage from "./routes/error-page";
+import ChooseCollection from './routes/choose-collection';
 
 const router = createBrowserRouter([
   {
@@ -38,14 +39,11 @@ const router = createBrowserRouter([
     path: "tsumego/edit/:tsumegoId",
     element: <TsumegoEdit />,
   },
+  {
+    path: "play/collections",
+    element: <ChooseCollection />,
+  },
 ]);
-
-function App() {
-    return (
-     <h1>Hello world!</h1>
-    );
-  }
-
 
 createRoot(document.getElementById("app")).render(
     <StrictMode>

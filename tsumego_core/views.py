@@ -18,7 +18,7 @@ from tsumego_core.serializers import CollectionSerializer, TagSerializer, Tsumeg
 
 from tsumego_core.upload_tsumego import upload_action
 
-class CollectionViewSet(viewsets.ModelViewSet):
+class CollectionViewSet(DynamicModelViewSet):
     # we add the number of tsumego in each collection
     queryset = Collection.objects.all().annotate(number=Count('tsumego')).order_by('id')
     serializer_class = CollectionSerializer

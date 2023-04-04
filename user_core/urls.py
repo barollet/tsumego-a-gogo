@@ -8,6 +8,7 @@ from user_core import views
 router = routers.DefaultRouter()
 router.register(r'users', views.UserViewSet, basename="user")
 router.register(r'groups', views.GroupViewSet, basename="group")
+router.register(r'progress', views.ProgressEntryViewSet, basename="progress")
 
 urlpatterns = [
     path('', include(router.urls)),

@@ -5,9 +5,12 @@ from rest_framework import viewsets
 from rest_framework import permissions
 from rest_framework.authtoken.serializers import AuthTokenSerializer
 
+from dynamic_rest.viewsets import DynamicModelViewSet
+
 from knox.views import LoginView as KnoxLoginView
 
-from .serializers import UserSerializer, GroupSerializer
+from .serializers import UserSerializer, GroupSerializer, ProgressEntrySerializer
+from .models import ProgressEntry
 
 # Documentation link for login
 # https://james1345.github.io/django-rest-knox/auth/#global-usage-on-all-views
@@ -42,4 +45,11 @@ class GroupViewSet(viewsets.ModelViewSet):
     queryset = Group.objects.all()
     serializer_class = GroupSerializer
     permission_classes = [permissions.IsAuthenticated]
+
+class ProgressEntryViewSet(DynamicModelViewSet):
+    """API endpoint to access user progress in different collections"""
+    def get_queryset(self, *args, **kwargs):
+        # TODO special case for admin users to get all progress
+        return ProgressEntry.objects.filter(user=self.request.user)
+    serializer_class = ProgressEntrySerializer
     

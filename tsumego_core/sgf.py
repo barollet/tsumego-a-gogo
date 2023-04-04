@@ -50,15 +50,16 @@ def compute_bounding_box(sgf_string: str, margin_x=1, margin_y=1):
     Margin sets the margin around the viewport to consider"""
     root = sgf.Sgf_game.from_string(sgf_string).get_root()
     moves = root.get('AW') | root.get('AB')
-    # sgfmill coordinates are 0, 0 bottom left
-    # jgoboard coordinates are 0, 0 top left
+    # sgfmill coordinates are 0, 0 bottom left (y, x)
+    # jgoboard coordinates are 0, 0 top left (x, y)
     # We move the coordinates to jgoboard representation
     bb_x, bb_y = 0, 0
     for (m_y, m_x) in moves:
         bb_x = max(bb_x, m_x)
         bb_y = max(bb_y, 19 - (m_y + 1))
 
-    return (bb_x + 1 + margin_x, bb_y + 1 + margin_y)
+    # the bounding box is capped at 19, independantly of the margin
+    return (min(bb_x + 1 + margin_x, 19), min(bb_y + 1 + margin_y, 19))
 
 def clean_sgf_headers_internal(game_tree: sgf.Sgf_game):
     """Removes unecessary nodes so internal SGF to tsumegogogo have the same format"""
@@ -82,6 +83,13 @@ def remove_variations_internal(game_tree: sgf.Sgf_game):
 
     return game_tree
 
+def normalize(coord):
+    """Used to compute tsumego quadrants"""
+    direction = coord - 9
+    if direction != 0:
+        direction = direction / abs(direction)
+    return direction
+
 def compute_quadrant(game_tree: sgf.Sgf_game) -> bool:
     """ Computes the tsumego orientation.
     It computes the quadrant where most points are located"""
@@ -91,12 +99,12 @@ def compute_quadrant(game_tree: sgf.Sgf_game) -> bool:
     quad_x = 0
     quad_y = 0
     # computes the polarity of each coordinate
-    for (m_x, m_y) in moves:
-        quad_x += [-1, 1][m_x <= 11]
-        quad_y += [-1, 1][m_y <= 11]
+    for (m_y, m_x) in moves:
+        quad_x += normalize(m_x)
+        quad_y += normalize(m_y)
 
-    # if less than 80% of the moves are on the same quadrant, keep the original orientation
-    if abs(quad_x) < 0.8*len(moves) or abs(quad_y) < 0.8*len(moves):
+    # if the polarity is less than 60% of the moves are on the same quadrant, keep the original orientation
+    if abs(quad_x) < 0.4*len(moves) or abs(quad_y) < 0.4*len(moves):
         return TOP_LEFT
 
     # normalize
@@ -164,3 +172,13 @@ if __name__ == "__main__":
     print(game2.get_root())
     remove_variations_internal(game2)
     print(game2.serialise())
+
+    print("GAME3")
+    GAME3S = "(;FF[4]AB[kb][lc][mc][nd][od][oe][pc][pe][pg][qe]\nAW[gc][ic][jc][je][le][nf][oc][of][pd][pf][qc][qd][re][rf]CA[UTF-8]GM[1])"
+    game3 = sgf.Sgf_game.from_string(GAME3S)
+    print(compute_quadrant(game3))
+    rotated = rotate_top_left_sgfstring(GAME3S)
+    print(compute_quadrant(sgf.Sgf_game.from_string(rotated)))
+    print(compute_bounding_box(rotated))
+
+
