@@ -30,6 +30,11 @@ function TsumegoView({tsumego_prop, static_board=false, variations=null, show_va
             };
             // When we have the tsumego we do the rendering
             if (static_board) {
+                if(tsumego.number == 182 || tsumego.number == 27) {
+                    console.log(tsumego);
+                    console.log("coucou")
+                    return;
+                }
                 create_static_board(containerRef.current, tsumego.problem_sgf, config);
             } else {
                 let board_state = create_play_board(containerRef.current, tsumego.problem_sgf, config);
